@@ -56,7 +56,11 @@ const taskSlice = createSlice({
         state.tasks = action.payload;
       })
       .addCase(addTask.fulfilled, (state, action) => {
-        state.tasks.push(action.payload);
+        // Only push if the Socket.io event hasn't already added it
+        const exists = state.tasks.find((t) => t._id === action.payload._id);
+        if (!exists) {
+          state.tasks.push(action.payload);
+        }
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex(
